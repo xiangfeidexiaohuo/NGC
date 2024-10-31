@@ -1,9 +1,11 @@
-Package: com.0xkuj.notificationsgroupcount
-Name: NotificationsGroupCount
+Package: com.dao.ngc
+Name: 通知组计数(rootless)
 Version: 1.0.6
 Architecture: iphoneos-arm
-Description: Count those notifications inside Apple notifications grouping!
+Description: NotificationsGroupCount：仿 iOS18.1，在锁屏通知堆栈中添加角标，显示组内的通知计数；根据开源编译并汉化。
 Maintainer: 0xkuj
 Author: 0xkuj
-Section: Tweaks
+Section: 嗨-工具
 Depends: mobilesubstrate (>= 0.9.5000)
+Conflicts: com.0xkuj.notificationsgroupcount
+
