@@ -1,7 +1,7 @@
 #import <Preferences/Preferences.h>
-#import <rootless.h>
+#import <roothide.h>
 
-#define GENERAL_PREFS ROOT_PATH_NS(@"/var/mobile/Library/Preferences/com.0xkuj.notificationsgroupcountprefs.plist")
+#define GENERAL_PREFS jbroot(@"/var/mobile/Library/Preferences/com.0xkuj.notificationsgroupcountprefs.plist")
 
 @interface PSTableCell (PrivateColourPicker)
 - (UIViewController *)_viewControllerForAncestor;

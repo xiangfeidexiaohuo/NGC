@@ -1,9 +1,9 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <rootless.h>
+#import <roothide.h>
 #include "NGCBadgeView.h"
 
-#define GENERAL_PREFS ROOT_PATH_NS(@"/var/mobile/Library/Preferences/com.0xkuj.notificationsgroupcountprefs.plist")
+#define GENERAL_PREFS jbroot(@"/var/mobile/Library/Preferences/com.0xkuj.notificationsgroupcountprefs.plist")
 
 CGFloat ngcBadgeSize = 20;
 int badgeStyle;

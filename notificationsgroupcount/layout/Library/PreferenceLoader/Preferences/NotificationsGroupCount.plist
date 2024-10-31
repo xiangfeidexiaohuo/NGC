@@ -15,7 +15,7 @@
 		<key>isController</key>
 		<true/>
 		<key>label</key>
-		<string>NotificationsGroupCount</string>
+		<string>通知组计数</string>
 	</dict>
 </dict>
 </plist>
