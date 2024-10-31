@@ -1,7 +1,11 @@
-export TARGET = iphone:clang:14.5:14.5
+DEBUG = 0
+FINALPACKAGE = 1
+export TARGET = iphone:clang:latest:14.5
 INSTALL_TARGET_PROCESSES = SpringBoard
 GO_EASY_ON_ME = 1
 ARCHS = arm64 arm64e
+
+THEOS_PACKAGE_SCHEME = rootless
 
 include $(THEOS)/makefiles/common.mk
 
