@@ -125,16 +125,12 @@ static void loadPrefs() {
 
 - (void)layoutSubviews {
 	%orig;
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-		[self updateNotificationCountBadge];
-	});
+	[self updateNotificationCountBadge];
 }
 
 - (void)_setVisibleView:(id)arg1 atIndex:(NSUInteger)arg2 {
 	%orig;
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-		[self updateNotificationCountBadge];
-	});
+	[self updateNotificationCountBadge];
 }
 
 %new
