@@ -89,7 +89,9 @@ static void loadPrefs() {
 // ios 15
 - (void)_toggleGroupedState {
 	%orig;
-	[self.groupListView updateNotificationCountBadge];
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		[self.groupListView updateNotificationCountBadge];
+	});
 }
 
 // ios 16
@@ -102,6 +104,14 @@ static void loadPrefs() {
 - (void)_reloadNotificationViewForNotificationRequest:(id)arg1 {
 	%orig;
 	[self.groupListView updateNotificationCountBadge];
+}
+
+// ios 15 badge misalign
+- (NCNotificationRequest *)leadingNotificationRequest { 
+	if (@available(iOS 15.0, *)) {
+		[self.groupListView updateNotificationCountBadge];
+	}
+	return %orig;
 }
 %end
 
@@ -155,7 +165,9 @@ static void loadPrefs() {
 		for (id view in shortLookView.subviews) {
 			if ([view isKindOfClass:NSClassFromString(@"NGCBadgeView")]) {
 				if ([((NCNotificationShortLookView *)((UIView *)view).superview) isNotificationContentViewHidden] == NO) {
+					[shortLookView _configureNotificationContentViewIfNecessary];
 					NCNotificationSeamlessContentView *nsc = [shortLookView _notificationContentView];
+					[nsc _configureBadgeIconViewIfNecessary];
 					NCBadgedIconView *badgeIcon = MSHookIvar<NCBadgedIconView *>(nsc, "_badgedIconView");
 					((NGCBadgeView *)view).frame = [self getBadgePosByFrame:badgeIcon.frame];
 					[view setBadgeText:numberString];
@@ -183,7 +195,9 @@ static void loadPrefs() {
 				badgeTextColorInit = brightness < 0.5 ? [UIColor whiteColor] : [UIColor blackColor];
 			}
 
+			[shortLookView _configureNotificationContentViewIfNecessary];
 			NCNotificationSeamlessContentView *nsc = [shortLookView _notificationContentView];
+			[nsc _configureBadgeIconViewIfNecessary];
 			NCBadgedIconView *badgeIcon = MSHookIvar<NCBadgedIconView *>(nsc, "_badgedIconView");
 			NGCBadgeView *ngcBadgeView = [[NGCBadgeView alloc] initWithFrame:[self getBadgePosByFrame:badgeIcon.frame] badgeText:numberString badgeColor:badgeBackgroundColorInit textColor:badgeTextColorInit style:badgeStyle shadowOpacity:shadowOpacity];
 			if ([shortLookView isNotificationContentViewHidden] == NO) {
