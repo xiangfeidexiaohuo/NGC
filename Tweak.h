@@ -24,8 +24,10 @@ BOOL isRTL;
 @interface NCNotificationShortLookView : UIView
 @property (nonatomic, copy, readwrite) NSString *primaryText;
 @property (nonatomic, copy, readwrite) UIView *prominentIconView;
+@property (nonatomic, retain) NGCBadgeView *badgeView;
 - (id)_notificationContentView;
 - (BOOL)isNotificationContentViewHidden;
+- (CGRect)getBadgePosByFrame:(CGRect)destFrame;
 @end 
 
 @interface NCNotificationShortLookViewController : NSObject

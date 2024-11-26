@@ -15,23 +15,25 @@ CGFloat ngcBadgeSizeHigherThan10 = 30;
 @end
 
 @implementation NGCBadgeView
-- (instancetype)initWithFrame:(CGRect)frame badgeText:(NSString *)text badgeColor:(UIColor *)badgeColor textColor:(UIColor *)textColor style:(NSUInteger)style shadowOpacity:(CGFloat)shadowOpacity {
-    self = [super initWithFrame:frame];
+- (instancetype)initWithBadgeText:(NSString *)text badgeColor:(UIColor *)badgeColor textColor:(UIColor *)textColor style:(NSUInteger)style shadowOpacity:(CGFloat)shadowOpacity {
+    self = [super init];
     if (self) {
-        self.origFrame = frame;
         if (style == BadgeStyleIconColors) {
             self.clipsToBounds = YES;
             self.blurView = [NSClassFromString(@"MTMaterialView") materialViewWithRecipe:6 configuration:1];
-            self.blurView.frame = self.bounds;
             self.blurView.weighting = 1;
             self.blurView.recipeDynamic = YES;
             self.blurView.zoomEnabled = YES;
-            self.blurView.layer.cornerRadius = frame.size.height / 2;
             [self addSubview:self.blurView];
-		} else {
+
+            self.blurView.translatesAutoresizingMaskIntoConstraints = NO;
+            [self.blurView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor].active = YES;
+            [self.blurView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor].active = YES;
+            [self.blurView.topAnchor constraintEqualToAnchor:self.topAnchor].active = YES;
+            [self.blurView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor].active = YES;
+		}
+        else
             self.backgroundColor = badgeColor;
-            self.layer.cornerRadius = frame.size.height / 2;
-        }
 
         self.badgeLabel = [[UILabel alloc] initWithFrame:self.bounds];
         self.badgeLabel.textAlignment = NSTextAlignmentCenter;
@@ -52,11 +54,17 @@ CGFloat ngcBadgeSizeHigherThan10 = 30;
     return self;
 }
 
-- (void)layoutSubviews {
+- (void)layoutSubviews {    
     [super layoutSubviews];
+
+    if (self.blurView)
+        self.blurView.layer.cornerRadius = self.frame.size.height / 2;
+    else
+        self.layer.cornerRadius = self.frame.size.height / 2;        
+
     // fix ghosting badge (hopefully)
     if ([((NCNotificationShortLookView*)self.superview) isNotificationContentViewHidden]) {
-        [self removeFromSuperview];
+        self.badgeLabel.text = @"0";
     }
 }
 
@@ -65,9 +73,7 @@ CGFloat ngcBadgeSizeHigherThan10 = 30;
     self.badgeLabel.text = text;
     // Hide if text is empty or zero
     self.hidden = (text == nil || [text isEqualToString:@""] || [text isEqualToString:@"0"]);
-    if (self.hidden) {
-        [self removeFromSuperview];
-    } else if ([text integerValue] > 9) {
+    if ([text integerValue] > 9) {
         self.badgeLabel.font = [UIFont boldSystemFontOfSize:11.5];
     } else {
         self.badgeLabel.font = [UIFont boldSystemFontOfSize:13.0];
