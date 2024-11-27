@@ -199,8 +199,13 @@ static void loadPrefs() {
 			[self.badgeView.widthAnchor constraintEqualToConstant:ngcBadgeSize].active = YES;
 			[self.badgeView.heightAnchor constraintEqualToConstant:ngcBadgeSize].active = YES;
 
-			[self.badgeView.trailingAnchor constraintEqualToAnchor:badgeIcon.trailingAnchor constant:6].active = YES;
-			[self.badgeView.topAnchor constraintEqualToAnchor:badgeIcon.topAnchor constant:-9].active = YES;	
+			if (@available(iOS 16.0, *)) {
+				[self.badgeView.trailingAnchor constraintEqualToAnchor:badgeIcon.trailingAnchor constant:5].active = YES;
+				[self.badgeView.topAnchor constraintEqualToAnchor:badgeIcon.topAnchor constant:-8].active = YES;	
+			} else {
+				[self.badgeView.trailingAnchor constraintEqualToAnchor:badgeIcon.trailingAnchor constant:4].active = YES;
+				[self.badgeView.topAnchor constraintEqualToAnchor:badgeIcon.topAnchor constant:-6].active = YES;	
+			}
 		}
 	}
 }
@@ -228,8 +233,6 @@ static void loadPrefs() {
 	loadPrefs();
 	if (isTweakEnabled) {
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-			UIApplication *springboardApp = [UIApplication sharedApplication];
-			isRTL = [springboardApp userInterfaceLayoutDirection];
 			%init(groupNotifications);
 		});
 	}
