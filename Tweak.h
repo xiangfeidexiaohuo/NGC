@@ -5,7 +5,7 @@
 
 #define GENERAL_PREFS ROOT_PATH_NS(@"/var/mobile/Library/Preferences/com.0xkuj.notificationsgroupcountprefs.plist")
 
-CGFloat ngcBadgeSize = 20;
+CGFloat ngcBadgeSize = 18;
 int badgeStyle;
 CGFloat shadowOpacity;     
 BOOL isTweakEnabled, isCustomColors;

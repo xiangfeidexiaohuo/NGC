@@ -199,13 +199,8 @@ static void loadPrefs() {
 			[self.badgeView.widthAnchor constraintEqualToConstant:ngcBadgeSize].active = YES;
 			[self.badgeView.heightAnchor constraintEqualToConstant:ngcBadgeSize].active = YES;
 
-			if (@available(iOS 16.0, *)) {
-				[self.badgeView.trailingAnchor constraintEqualToAnchor:badgeIcon.trailingAnchor constant:7].active = YES;
-				[self.badgeView.topAnchor constraintEqualToAnchor:badgeIcon.topAnchor constant:-7].active = YES;
-			} else {
-				[self.badgeView.trailingAnchor constraintEqualToAnchor:badgeIcon.trailingAnchor constant:7].active = YES;
-				[self.badgeView.topAnchor constraintEqualToAnchor:badgeIcon.topAnchor constant:-3].active = YES;
-			}	
+			[self.badgeView.trailingAnchor constraintEqualToAnchor:badgeIcon.trailingAnchor constant:7].active = YES;
+			[self.badgeView.topAnchor constraintEqualToAnchor:badgeIcon.topAnchor constant:-10].active = YES;	
 		}
 	}
 }
