@@ -199,8 +199,8 @@ static void loadPrefs() {
 			[self.badgeView.widthAnchor constraintEqualToConstant:ngcBadgeSize].active = YES;
 			[self.badgeView.heightAnchor constraintEqualToConstant:ngcBadgeSize].active = YES;
 
-			[self.badgeView.trailingAnchor constraintEqualToAnchor:badgeIcon.trailingAnchor constant:7].active = YES;
-			[self.badgeView.topAnchor constraintEqualToAnchor:badgeIcon.topAnchor constant:-10].active = YES;	
+			[self.badgeView.trailingAnchor constraintEqualToAnchor:badgeIcon.trailingAnchor constant:6].active = YES;
+			[self.badgeView.topAnchor constraintEqualToAnchor:badgeIcon.topAnchor constant:-9].active = YES;	
 		}
 	}
 }
@@ -220,6 +220,8 @@ static void loadPrefs() {
 // 	primaryTextLabel.frame = CGRectMake(70, primaryTextLabel.frame.origin.y, primaryTextLabel.frame.size.width, primaryTextLabel.frame.size.height);
 // }
 // %end
+%end
+
 %end
 
 %ctor {
