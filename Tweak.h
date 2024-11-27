@@ -5,7 +5,7 @@
 
 #define GENERAL_PREFS ROOT_PATH_NS(@"/var/mobile/Library/Preferences/com.0xkuj.notificationsgroupcountprefs.plist")
 
-CGFloat ngcBadgeSize = 20;
+CGFloat ngcBadgeSize = 18;
 int badgeStyle;
 CGFloat shadowOpacity;     
 BOOL isTweakEnabled, isCustomColors;
@@ -24,8 +24,10 @@ BOOL isRTL;
 @interface NCNotificationShortLookView : UIView
 @property (nonatomic, copy, readwrite) NSString *primaryText;
 @property (nonatomic, copy, readwrite) UIView *prominentIconView;
+@property (nonatomic, retain) NGCBadgeView *badgeView;
 - (id)_notificationContentView;
 - (BOOL)isNotificationContentViewHidden;
+- (CGRect)getBadgePosByFrame:(CGRect)destFrame;
 @end 
 
 @interface NCNotificationShortLookViewController : NSObject

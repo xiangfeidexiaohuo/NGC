@@ -114,22 +114,6 @@ static void loadPrefs() {
 %end
 
 %hook NCNotificationListView 
-%new
-- (CGRect)getBadgePosByFrame:(CGRect)destFrame {
-	if (@available(iOS 16.0, *)) {
-		if (isRTL) {
-			return CGRectMake(destFrame.origin.x, destFrame.origin.y-7, ngcBadgeSize, ngcBadgeSize);
-		} else {
-			return CGRectMake(destFrame.size.width, destFrame.origin.y-7, ngcBadgeSize, ngcBadgeSize);
-		}
-	} else {
-		if (isRTL) {
-			return CGRectMake(destFrame.origin.x-7, destFrame.origin.y-3, ngcBadgeSize, ngcBadgeSize);
-		} else {
-			return CGRectMake(destFrame.size.width-7, destFrame.origin.y-3, ngcBadgeSize, ngcBadgeSize);
-		}
-	}
-}
 
 - (void)layoutSubviews {
 	%orig;
@@ -159,45 +143,7 @@ static void loadPrefs() {
 		}
 		NCNotificationShortLookView *shortLookView = [csnv _notificationShortLookViewIfLoaded];
 		NSString *numberString = [NSString stringWithFormat:@"%lu",[self count]];
-		BOOL alreadyAdded = NO;
-		for (id view in shortLookView.subviews) {
-			if ([view isKindOfClass:NSClassFromString(@"NGCBadgeView")]) {
-				if ([((NCNotificationShortLookView *)((UIView *)view).superview) isNotificationContentViewHidden] == NO) {
-					NCNotificationSeamlessContentView *nsc = [shortLookView _notificationContentView];
-					NCBadgedIconView *badgeIcon = MSHookIvar<NCBadgedIconView *>(nsc, "_badgedIconView");
-					((NGCBadgeView *)view).frame = [self getBadgePosByFrame:badgeIcon.frame];
-					[view setBadgeText:numberString];
-				} else {
-					// THIS MEANS WE FOUND A GHOST BADGE
-					[view setBadgeText:@"0"];
-				}
-				alreadyAdded = YES;
-				break;
-			}
-		}
-
-		if (alreadyAdded == NO) {
-			UIColor *badgeBackgroundColorInit = nil;
-			UIColor *badgeTextColorInit = nil;
-			if (isCustomColors == YES) {
-				badgeBackgroundColorInit = badgeBackgroundColor;
-				badgeTextColorInit = badgeTextColor;
-				badgeStyle = BadgeStyleCustomColors;
-			} else if (badgeStyle == BadgeStyleDynamicBackgroundColor) {
-				badgeBackgroundColorInit = [[%c(SBWallpaperController) sharedInstance] averageColorForVariant:0];
-				CGFloat r, g, b, alpha;
-				[badgeBackgroundColorInit getRed:&r green:&g blue:&b alpha:&alpha];
-				CGFloat brightness = (r * 0.299 + g * 0.587 + b * 0.114);
-				badgeTextColorInit = brightness < 0.5 ? [UIColor whiteColor] : [UIColor blackColor];
-			}
-
-			NCNotificationSeamlessContentView *nsc = [shortLookView _notificationContentView];
-			NCBadgedIconView *badgeIcon = MSHookIvar<NCBadgedIconView *>(nsc, "_badgedIconView");
-			NGCBadgeView *ngcBadgeView = [[NGCBadgeView alloc] initWithFrame:[self getBadgePosByFrame:badgeIcon.frame] badgeText:numberString badgeColor:badgeBackgroundColorInit textColor:badgeTextColorInit style:badgeStyle shadowOpacity:shadowOpacity];
-			if ([shortLookView isNotificationContentViewHidden] == NO) {
-				[shortLookView addSubview:ngcBadgeView];	
-			}
-		}
+		[shortLookView.badgeView setBadgeText:numberString];
 	} else if ([self isGrouped] == NO || [self count] == 1) {
 		[self deleteBadgesFromCurrentListView];
 	}
@@ -216,28 +162,55 @@ static void loadPrefs() {
 		}
 
 		NCNotificationShortLookView *shortLookView = [csnv _notificationShortLookViewIfLoaded];
-		for (id view in shortLookView.subviews) {
-			if ([view isKindOfClass:NSClassFromString(@"NGCBadgeView")]) {
-				[view setBadgeText:@"0"];
-			}
-		}
+		[shortLookView.badgeView setBadgeText:@"0"];
 	}
 }
+
 %end
 
-// fix ghosting badges in 0 alpha setups
 %hook NCNotificationShortLookView 
-- (void)setNotificationContentViewHidden:(BOOL)arg1 {
+
+%property (nonatomic, retain) NGCBadgeView *badgeView;
+
+-(void)_layoutNotificationContentView {
 	%orig;
-	if (arg1 == YES) {
-		for (id view in self.subviews) {
-			if ([view isKindOfClass:NSClassFromString(@"NGCBadgeView")]) {
-				[((NGCBadgeView *)view) setBadgeText:@"0"];
-			}
+	if (!self.badgeView) {
+		UIColor *badgeBackgroundColorInit = nil;
+		UIColor *badgeTextColorInit = nil;
+		if (isCustomColors == YES) {
+			badgeBackgroundColorInit = badgeBackgroundColor;
+			badgeTextColorInit = badgeTextColor;
+			badgeStyle = BadgeStyleCustomColors;
+		} else if (badgeStyle == BadgeStyleDynamicBackgroundColor) {
+			badgeBackgroundColorInit = [[%c(SBWallpaperController) sharedInstance] averageColorForVariant:0];
+			CGFloat r, g, b, alpha;
+			[badgeBackgroundColorInit getRed:&r green:&g blue:&b alpha:&alpha];
+			CGFloat brightness = (r * 0.299 + g * 0.587 + b * 0.114);
+			badgeTextColorInit = brightness < 0.5 ? [UIColor whiteColor] : [UIColor blackColor];
+		}
+		
+		NCNotificationSeamlessContentView *nsc = [self _notificationContentView];
+		NCBadgedIconView *badgeIcon = MSHookIvar<NCBadgedIconView *>(nsc, "_badgedIconView");
+
+		if (badgeIcon) {
+			self.badgeView = [[NGCBadgeView alloc] initWithBadgeText:@"0" badgeColor:badgeBackgroundColorInit textColor:badgeTextColorInit style:badgeStyle shadowOpacity:shadowOpacity];
+			[self addSubview:self.badgeView];
+			self.badgeView.translatesAutoresizingMaskIntoConstraints = NO;
+			[self.badgeView.widthAnchor constraintEqualToConstant:ngcBadgeSize].active = YES;
+			[self.badgeView.heightAnchor constraintEqualToConstant:ngcBadgeSize].active = YES;
+
+			[self.badgeView.trailingAnchor constraintEqualToAnchor:badgeIcon.trailingAnchor constant:6].active = YES;
+			[self.badgeView.topAnchor constraintEqualToAnchor:badgeIcon.topAnchor constant:-9].active = YES;	
 		}
 	}
 }
-%end
+
+// fix ghosting badges in 0 alpha setups
+- (void)setNotificationContentViewHidden:(BOOL)arg1 {
+	%orig;
+	if (arg1 == YES) 
+		[self.badgeView setBadgeText:@"0"];
+}
 
 // if we ever decide to push text.. start here
 // %hook NCNotificationSeamlessContentView
@@ -247,6 +220,8 @@ static void loadPrefs() {
 // 	primaryTextLabel.frame = CGRectMake(70, primaryTextLabel.frame.origin.y, primaryTextLabel.frame.size.width, primaryTextLabel.frame.size.height);
 // }
 // %end
+%end
+
 %end
 
 %ctor {

@@ -40,7 +40,7 @@ typedef NS_ENUM(NSInteger, BadgeStyle) {
 };
 
 @interface NGCBadgeView : UIView
-- (instancetype)initWithFrame:(CGRect)frame badgeText:(NSString *)text badgeColor:(UIColor *)badgeColor textColor:(UIColor *)textColor style:(NSUInteger)style shadowOpacity:(CGFloat)shadowOpacity;
+- (instancetype)initWithBadgeText:(NSString *)text badgeColor:(UIColor *)badgeColor textColor:(UIColor *)textColor style:(NSUInteger)style shadowOpacity:(CGFloat)shadowOpacity;
 - (void)setBadgeText:(NSString *)text;
 - (NSString *)getBadgeText;
 @end
