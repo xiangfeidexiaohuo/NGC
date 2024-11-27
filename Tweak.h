@@ -5,12 +5,11 @@
 
 #define GENERAL_PREFS ROOT_PATH_NS(@"/var/mobile/Library/Preferences/com.0xkuj.notificationsgroupcountprefs.plist")
 
-CGFloat ngcBadgeSize = 18;
+CGFloat ngcBadgeSize = 20;
 int badgeStyle;
 CGFloat shadowOpacity;     
 BOOL isTweakEnabled, isCustomColors;
 UIColor *badgeBackgroundColor, *badgeTextColor;  
-BOOL isRTL;
 
 @interface SBWallpaperController
 + (id)sharedInstance;
